@@ -111,12 +111,14 @@ class OAIPMHHarvester extends AChaosImporter {
 		if($response === false || empty($response->GetRecord->record)) {
 			throw new RuntimeException("Unexpected response from the OAIPMH service.");
 		} else {
+			var_dump($response);
+			exit;
 			return $response;
 		}
 	}
 	
 	protected function externalObjectToString($externalObject) {
-		var_dump($externalObject);
+		//var_dump($externalObject);
 	}
 	
 	protected function getOrCreateObject($externalObject) {
