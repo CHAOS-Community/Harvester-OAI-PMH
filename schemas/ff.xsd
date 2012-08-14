@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<xs:schema xmlns:ff="http://www.kulturarv.dk/fundogfortidsminder/ff" xmlns:gml="http://www.opengis.net/gml" xmlns:lido="http://www.lido-schema.org" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.kulturarv.dk/fundogfortidsminder/ff">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+	<xs:import namespace="http://www.lido-schema.org" schemaLocation="http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd"/>
+	<xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"/>
+
+	<xs:complexType name="identifierComplexType">
+		<xs:annotation>
+			<xs:documentation>
+				How to record: There is no controlled list of
+				identifier types.
+				Suggested values include, but are not limited to
+				the following: doi
+				(Digital Objects Identifier), uid (Globally unique
+				identifier), hdl
+				(Handle), localpermalinkpurl (Persistent Uniform
+				Resource Locator),
+				uri (Uniform Resource Identifier), url (Uniform
+				Resource Locator),
+				urn (Uniform Resource Name)
+      </xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="conceptComplexType">
+		<xs:annotation>
+			<xs:documentation>Definition: Set for identifiers and terms of a
+				concept.</xs:documentation>
+			<xs:documentation>How to record: A concept describes a conceptual
+				resource. Concepts are organized in concept schemes like thesauri,
+				classification schemes, taxonomies, subject-heading systems, or any
+				other type of structured controlled vocabulary. See also SKOS
+				specifications at http://www.w3.org/2004/02/skos/</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="conceptID" type="ff:identifierComplexType">
+				<xs:annotation>
+					<xs:documentation>Definition: A unique identifier for the concept.
+					</xs:documentation>
+					<xs:documentation>How to record: Preferably taken from and linking
+						to a published controlled vocabulary.</xs:documentation>
+					<xs:documentation>Notes: All FBB controlled vocabularies will be
+						published as SKOS on URIs of the form
+						http://www.kulturarv.dk/fbb/skos/$vocab#$id.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="term" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Definition: A name for the referred concept, used
+						for indexing.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Elements for rightsWork. -->
+
+	<xs:complexType name="webResourceComplexType">
+		<xs:annotation>
+			<xs:documentation>Definition: A uri/url reference to a web resource
+				that describes / represents the item, e.g. a metadata record.
+			</xs:documentation>
+			<xs:documentation>Notes: It differs from an identifier for the item
+				itself. </xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="pref" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Definition: Qualifies the value as a preferred
+							or
+							alternative variant. </xs:documentation>
+						<xs:documentation>How to record: Data values: preferred, alternate
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="formatResource" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Definition: Indicates the internet media type,
+							e.g. the file format of the given web resource.
+						</xs:documentation>
+						<xs:documentation>How to record: Data values should be taken from
+							the official IANA list (see
+							http://www.iana.org/assignments/media-types/). Includes:
+							text/html, text/xml, image/jpeg, audio/mpeg, video/mpeg,
+							application/pdf.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute ref="xml:lang"/>
+				<xs:attribute name="label" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="legalBodyRefComplexType">
+		<xs:annotation>
+			<xs:documentation>Definition: Reference information to a legal body.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="legalBodyID" type="ff:identifierComplexType">
+				<xs:annotation>
+					<xs:documentation>Definition: Unambiguous identification of the
+						institution or person referred to as legal body.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="legalBodyName" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Definition: Name of the institution or person.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="legalBodyWeblink" type="ff:webResourceComplexType">
+				<xs:annotation>
+					<xs:documentation>Definition: Weblink of the institution or person
+						referred to as legal body.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:attribute name="sortorder" type="xs:integer">
+		<xs:annotation>
+			<xs:documentation>Definition: Assigns a priority order for online
+				presentation of the element. </xs:documentation>
+			<xs:documentation>How to record: Has to be a positive integer, with
+				descending priority from 1 to x. </xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+
+	<xs:complexType name="rightsComplexType">
+		<xs:annotation>
+			<xs:documentation>Definition: Information about rights management;
+				may include copyright and other intellectual property statements.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="rightsType" type="ff:conceptComplexType">
+				<xs:annotation>
+					<xs:documentation>Definition: The specific type of right being
+						recorded. </xs:documentation>
+					<xs:documentation>How to record: For example: copyright,
+						publication right, data protection right, trademark.Preferably
+						taken from a published controlled value list. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" name="rightsDate" type="xs:date">
+				<xs:annotation>
+					<xs:documentation>Definition: The date on which a right is or was
+						current.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="rightsHolder">
+				<xs:annotation>
+					<xs:documentation>Definition: The holder of the right.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ff:legalBodyRefComplexType">
+							<xs:attribute ref="ff:sortorder"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="creditLine" type="lido:textComplexType">
+				<xs:annotation>
+					<xs:documentation>Definition: Acknowledgement of the rights
+						associated with the physical and/or digital object as requested.
+					</xs:documentation>
+					<xs:documentation>How to record: Repeat this element only for
+						language variants.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="rightsWorkWrap">
+		<xs:annotation>
+			<xs:documentation>Definition: Wrapper for rights information about
+				the object / work described.</xs:documentation>
+			<xs:documentation>Notes: Rights information for the record and for
+				resources is recorded in the respective rights elements recordRights
+				and rightsResource. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="rightsWorkSet">
+					<xs:annotation>
+						<xs:documentation>Definition: Information about rights management;
+							may include copyright and other intellectual property statements
+							about the object / work.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="ff:rightsComplexType">
+								<xs:attribute ref="ff:sortorder"/>
+							</xs:extension>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="personComplexType">
+		<xs:complexContent>
+			<xs:extension base="ff:conceptComplexType">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="title" nillable="true" type="ff:conceptComplexType"/>
+					<xs:element name="role" type="ff:conceptComplexType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="characteristicComplexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="objectName" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="preservationYear" nillable="true" type="xs:integer"/>
+			<xs:element minOccurs="0" name="attributeYear" nillable="true" type="xs:integer"/>
+			<xs:element minOccurs="0" name="measurementYear" nillable="true" type="xs:integer"/>
+			<xs:element minOccurs="0" name="compassDirection" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="lengthCm" nillable="true" type="xs:double"/>
+			<xs:element minOccurs="0" name="widthCm" nillable="true" type="xs:double"/>
+			<xs:element minOccurs="0" name="heightCm" nillable="true" type="xs:double"/>
+			<xs:element minOccurs="0" name="depthCm" nillable="true" type="xs:double"/>
+			<xs:element minOccurs="0" name="areaM2" nillable="true" type="xs:double"/>
+			<xs:element minOccurs="0" name="preservationState" nillable="true" type="ff:conceptComplexType"/>
+			<xs:element minOccurs="0" name="attribute" nillable="true" type="ff:conceptComplexType"/>
+			<xs:element minOccurs="0" name="measurementType" nillable="true" type="ff:conceptComplexType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="objectComplexType">
+		<xs:sequence>
+			<xs:element name="id" type="ff:identifierComplexType"/>
+			<xs:element minOccurs="0" name="text" nillable="true" type="xs:string"/>
+			<xs:element name="date">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="fromYear" type="xs:integer"/>
+						<xs:element name="toYear" type="xs:integer"/>
+						<xs:element minOccurs="0" name="mainPeriod" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="period">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="ff:conceptComplexType">
+										<xs:sequence>
+											<xs:element name="publicTerm" type="xs:string"/>
+										</xs:sequence>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element minOccurs="0" name="characteristics">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="characteristic" nillable="true" type="ff:characteristicComplexType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="objectType">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ff:conceptComplexType">
+							<xs:sequence>
+								<xs:element name="objectClassTerm" type="xs:string"/>
+								<xs:element name="objectClassExplanation" type="xs:string"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element minOccurs="0" name="transportObject" nillable="true">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="constructionId" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="salvaged" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="departureDate" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="destination" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="constructionSite" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="constructionYear" nillable="true" type="xs:integer"/>
+						<xs:element minOccurs="0" name="homePort" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="owner" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="cargo" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="displacement" nillable="true" type="xs:integer"/>
+						<xs:element minOccurs="0" name="material" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="rigging" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="engine" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="armament" nillable="true" type="xs:string"/>
+						<xs:element minOccurs="0" name="wreckedYear" nillable="true" type="xs:integer"/>
+						<xs:element minOccurs="0" name="transportType" type="ff:conceptComplexType"/>
+						<xs:element minOccurs="0" name="displacementType" type="ff:conceptComplexType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="object" type="ff:objectComplexType">
+		<xs:annotation>
+			<xs:documentation>Anlaeg</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+	<xs:element name="digitalDocumentation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="ff:identifierComplexType"/>
+				<xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+				<xs:element name="date" type="xs:string"/>
+				<xs:element minOccurs="0" name="filename" nillable="true" type="xs:string"/>
+				<xs:element minOccurs="0" name="copyright" nillable="true" type="xs:string"/>
+				<xs:element minOccurs="0" name="legalUse" nillable="true" type="xs:string"/>
+				<xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+				<xs:element minOccurs="0" name="link" nillable="true" type="xs:string"/>
+				<xs:element minOccurs="0" name="isShownAt" nillable="true" type="xs:string"/>
+				<xs:element name="documentType" type="ff:conceptComplexType"/>
+				<xs:element minOccurs="0" name="persons">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="person" type="ff:personComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="eventComplexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="startDate" nillable="true" type="xs:string"/>
+			<xs:element name="endDate" type="xs:string"/>
+			<xs:element minOccurs="0" name="altArchive" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="caseNo" nillable="true" type="xs:string"/>
+			<xs:element name="eventType">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="ff:conceptComplexType">
+							<xs:sequence>
+								<xs:element name="eventClassTerm" type="xs:string"/>
+							</xs:sequence>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="institution" type="ff:conceptComplexType"/>
+			<xs:element name="archive" type="ff:conceptComplexType"/>
+			<xs:element minOccurs="0" name="texts">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="text">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="freeText" type="xs:string"/>
+									<xs:element name="textType" type="ff:conceptComplexType"/>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element minOccurs="0" name="persons">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="person" type="ff:personComplexType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="scientificAnalysisComplexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="testYear" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="resultDate" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="testId" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="caseNo" nillable="true" type="xs:string"/>
+			<xs:element name="analysisType" type="ff:conceptComplexType"/>
+			<xs:element name="institution" type="ff:conceptComplexType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="archivalDocumentationComplexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="name" nillable="true" type="xs:string"/>
+			<xs:element name="date" type="xs:string"/>
+			<xs:element minOccurs="0" name="filmNo" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="photoNo" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="copyright" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="legalUse" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="description" nillable="true" type="xs:string"/>
+			<xs:element name="documentType" type="ff:conceptComplexType"/>
+			<xs:element name="institution" type="ff:conceptComplexType"/>
+			<xs:element minOccurs="0" name="archive" nillable="true" type="ff:conceptComplexType"/>
+			<xs:element minOccurs="0" name="persons">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="person" type="ff:personComplexType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="literatureReferenceComplexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="isbn" nillable="true" type="xs:string"/>
+			<xs:element name="title" type="xs:string"/>
+			<xs:element minOccurs="0" name="creator" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="editor" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="article" nillable="true" type="xs:string"/>
+			<xs:element name="publicationYear" type="xs:integer"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="otherIdComplexType">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="alternativeNo" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="siteNo" nillable="true" type="xs:integer"/>
+			<xs:element minOccurs="0" name="ext" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="listingNo" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="listingStatus" nillable="true" type="xs:string"/>
+			<xs:element minOccurs="0" name="year" nillable="true" type="xs:integer"/>
+			<xs:element name="idType" type="ff:conceptComplexType"/>
+			<xs:element minOccurs="0" name="parishNo" nillable="true" type="ff:conceptComplexType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="placeNameComplexType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string"/>
+			<xs:element name="year" type="xs:integer"/>
+			<xs:element name="placeNameType" type="ff:conceptComplexType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="site">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="ff:identifierComplexType"/>
+				<xs:element name="date" type="xs:dateTime"/>
+				<xs:element name="siteNo" type="xs:integer"/>
+				<xs:element name="ext" type="xs:string"/>
+				<xs:element name="parishNo" type="ff:conceptComplexType"/>
+				<xs:element name="plotType" type="ff:conceptComplexType"/>
+				<xs:element minOccurs="0" name="placeNames">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="placeName" type="ff:placeNameComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="otherIds">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="otherId" type="ff:otherIdComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="listing">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="listingNo" type="xs:string"/>
+							<xs:element name="listingStatus" type="xs:string"/>
+							<xs:element minOccurs="0" name="listingText" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="registrationDate" nillable="true" type="xs:dateTime"/>
+							<xs:element name="registrationStatus" type="xs:string"/>
+							<xs:element name="cancelled" type="xs:boolean"/>
+							<xs:element minOccurs="0" name="cancelledYear" nillable="true" type="xs:integer"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="guide">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element minOccurs="0" name="internalAssessment" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="externalAssessment" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="attractionText" nillable="true" type="xs:string"/>
+							<xs:element minOccurs="0" name="signSite" nillable="true" type="xs:boolean"/>
+							<xs:element minOccurs="0" name="signRoad" nillable="true" type="xs:boolean"/>
+							<xs:element minOccurs="0" name="parking" nillable="true" type="xs:boolean"/>
+							<xs:element minOccurs="0" name="publicAccess" nillable="true" type="xs:boolean"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="preservationState">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element minOccurs="0" name="surroundingsYear" nillable="true" type="xs:integer"/>
+							<xs:element minOccurs="0" name="threatYear" nillable="true" type="xs:integer"/>
+							<xs:element minOccurs="0" name="signYear" nillable="true" type="xs:integer"/>
+							<xs:element minOccurs="0" name="surroundings" nillable="true" type="ff:conceptComplexType"/>
+							<xs:element minOccurs="0" name="threat" nillable="true" type="ff:conceptComplexType"/>
+							<xs:element minOccurs="0" name="monumentSign" nillable="true" type="ff:conceptComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="adminArea">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element minOccurs="0" name="municipality" nillable="true" type="ff:conceptComplexType"/>
+							<xs:element minOccurs="0" name="museum" nillable="true" type="ff:conceptComplexType"/>
+							<xs:element minOccurs="0" name="supervision" nillable="true" type="ff:conceptComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="geodata">
+					<xs:complexType>
+						<xs:annotation>
+							<xs:documentation>Notes: For documentation on GML refer to
+								http://www.opengeospatial.org/standards/gml.</xs:documentation>
+						</xs:annotation>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" minOccurs="0" ref="gml:Point"/>
+							<xs:element maxOccurs="unbounded" minOccurs="0" ref="gml:LineString"/>
+							<xs:element maxOccurs="unbounded" minOccurs="0" ref="gml:Polygon"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="objects">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element minOccurs="0" ref="ff:rightsWorkWrap"/>
+							<xs:element minOccurs="1" name="primaryObject" type="ff:objectComplexType"/>
+							<xs:element maxOccurs="unbounded" minOccurs="0" ref="ff:object"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="events">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="event" type="ff:eventComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="scientificAnalyses">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="scientificAnalysis" type="ff:scientificAnalysisComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="digitalDocumentations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" ref="ff:digitalDocumentation"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="archivalDocumentations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="archivalDocumentation" type="ff:archivalDocumentationComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element minOccurs="0" name="literatureReferences">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element maxOccurs="unbounded" name="literatureReference" type="ff:literatureReferenceComplexType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="sites">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ff:rightsWorkWrap"/>
+				<xs:element maxOccurs="unbounded" ref="ff:site"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
