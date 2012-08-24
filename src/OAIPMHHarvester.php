@@ -125,7 +125,7 @@ class OAIPMHHarvester extends AChaosImporter {
 		
 	}
 	
-	protected function initializeExtras(&$extras) {
+	protected function initializeExtras($externalObject, &$extras) {
 		// Nothing to do here.
 	}
 	
