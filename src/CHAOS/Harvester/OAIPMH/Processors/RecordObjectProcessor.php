@@ -1,0 +1,58 @@
+<?php
+namespace CHAOS\Harvester\OAIPMH\Processors;
+use CHAOS\Harvester\Shadows\ObjectShadow;
+use CHAOS\Harvester\Shadows\SkippedObjectShadow;
+
+class RecordObjectProcessor extends \CHAOS\Harvester\Processors\ObjectProcessor {
+	
+	protected function generateQuery($externalObject) {
+		/*
+		$legacyQuery = sprintf('(DKA-Organization:"%s" AND ObjectTypeID:%u AND m00000000-0000-0000-0000-000063c30000_da_all:"%s")', 'DR', $this->_objectTypeId, strval($externalObject->AssetId));
+		$newQuery = sprintf('(FolderTree:%u AND ObjectTypeID:%u AND DKA-ExternalIdentifier:"%s")', $this->_folderId, $this->_objectTypeId, strval($externalObject->AssetId));
+		return sprintf("(%s OR %s)", $legacyQuery, $newQuery);
+		*/
+		return "97982766-4f7d-e640-8791-3d8f079db992"; // Some object 
+	}
+	
+	public function process($externalObject, $shadow = null) {
+		$this->_harvester->debug(__CLASS__." is processing.");
+		
+		/* @var $externalObject \SimpleXMLElement */
+		
+		//$this->_harvester->info("Processing '%s' #%d", $externalObject->Title, $externalObject->AssetId);
+		var_dump($externalObject);
+		exit;
+		
+		/*
+		$shadow = new ObjectShadow();
+		$shadow = $this->initializeShadow($shadow);
+		$shadow->extras["AssetId"] = strval($externalObject->AssetId);
+		
+		$shadow->query = $this->generateQuery($externalObject);
+		var_dump($externalObject);
+		$shadow = $this->_harvester->process('asset_metadata_dka', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_metadata_dka2', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_metadata_dka_dr', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_file_thumb', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_file_video_high', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_file_video_mid', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_file_video_low', $externalObject, $shadow);
+		$shadow = $this->_harvester->process('asset_file_audio', $externalObject, $shadow);
+		
+		$shadow->commit($this->_harvester);
+		
+		return $shadow;
+		*/
+		return null;
+	}
+	
+	function skip($externalObject, $shadow = null) {
+		$shadow = new SkippedObjectShadow();
+		$shadow = $this->initializeShadow($shadow);
+		$shadow->query = $this->generateQuery($externalObject);
+		
+		$shadow->commit($this->_harvester);
+		
+		return $shadow;
+	}
+}
