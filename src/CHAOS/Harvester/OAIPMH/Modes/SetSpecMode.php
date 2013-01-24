@@ -16,13 +16,15 @@ class SetSpecMode extends \CHAOS\Harvester\Modes\SetByReferenceMode implements \
 	public function execute($reference) {
 		$this->_harvester->debug(__CLASS__." is executing.");
 		
+		assert(is_string($reference));
+		
 		/* @var $oaipmh \CHAOS\Harvester\OAIPMH\LoadableOAIPMHClient */
 		$oaipmh = $this->_harvester->getExternalClient('oaipmh');
 		
 		$r = 1;
 		$resumptionToken = null;
 		
-		$this->_harvester->info("Fetching references to all movieclips.");
+		$this->_harvester->info("Fetching references to all records belonging to the set '%s'.", $reference);
 		do {
 			if($resumptionToken == null) {
 				$response = $oaipmh->ListRecords($this->_metadataPrefix, null, null, null, $reference);
@@ -30,8 +32,12 @@ class SetSpecMode extends \CHAOS\Harvester\Modes\SetByReferenceMode implements \
 				$response = $oaipmh->ListRecords(null, $resumptionToken, null, null, null);
 			}
 			
-			$total = $response->ListRecords->resumptionToken->attributes()->completeListSize;
 			$records = $response->ListRecords->record;
+			if(count($response->ListRecords->resumptionToken) == 0) {
+				$total = count($records);
+			} else {
+				$total = $response->ListRecords->resumptionToken->attributes()->completeListSize;
+			}
 			
 			$this->_harvester->info("Found %u records.", $total);
 		
