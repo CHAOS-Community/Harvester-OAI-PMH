@@ -21,38 +21,41 @@ class SetSpecMode extends \CHAOS\Harvester\Modes\SetByReferenceMode implements \
 		/* @var $oaipmh \CHAOS\Harvester\OAIPMH\LoadableOAIPMHClient */
 		$oaipmh = $this->_harvester->getExternalClient('oaipmh');
 		
-		$r = 1;
-		$resumptionToken = null;
-		
-		$this->_harvester->info("Fetching references to all records belonging to the set '%s'.", $reference);
-		do {
-			if($resumptionToken == null) {
-				$response = $oaipmh->ListRecords($this->_metadataPrefix, null, null, null, $reference);
-			} else {
-				$response = $oaipmh->ListRecords(null, $resumptionToken, null, null, null);
-			}
+		foreach(explode(',', $reference) as $set) {
+			$r = 1;
+			$resumptionToken = null;
 			
-			$records = $response->ListRecords->record;
-			if(count($response->ListRecords->resumptionToken) == 0) {
-				$total = count($records);
-			} else {
-				$total = $response->ListRecords->resumptionToken->attributes()->completeListSize;
-			}
-			
-			$this->_harvester->info("Found %u records.", $total);
-		
-			foreach($records as $record) {
-				printf("[#%u/%u] ", $r++, $total);
-				$recordShadow = null;
-				try {
-					$recordShadow = $this->_harvester->process('record', $record);
-				} catch(\Exception $e) {
-					$this->_harvester->registerProcessingException($e, $record, $recordShadow);
+			$this->_harvester->info("Fetching references to all records belonging to the set '%s'.", $set);
+			do {
+				if($resumptionToken == null) {
+					$response = $oaipmh->ListRecords($this->_metadataPrefix, null, null, null, $set);
+				} else {
+					$response = $oaipmh->ListRecords(null, $resumptionToken, null, null, null);
 				}
-				print("\n");
-			}
+					
+				$records = $response->ListRecords->record;
+				if(count($response->ListRecords->resumptionToken) == 0) {
+					$total = count($records);
+				} else {
+					$total = $response->ListRecords->resumptionToken->attributes()->completeListSize;
+				}
+					
+				$this->_harvester->info("Found %u records.", $total);
 			
-			$resumptionToken = strval($response->ListRecords->resumptionToken);
-		} while($r < $total);
+				foreach($records as $record) {
+					printf("[#%u/%u] ", $r++, $total);
+					$recordShadow = null;
+					try {
+						$recordShadow = $this->_harvester->process('record', $record);
+					} catch(\Exception $e) {
+						$this->_harvester->registerProcessingException($e, $record, $recordShadow);
+					}
+					print("\n");
+				}
+					
+				$resumptionToken = strval($response->ListRecords->resumptionToken);
+			} while($r < $total);
+		}
+		
 	}
 }
