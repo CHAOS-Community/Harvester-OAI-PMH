@@ -29,7 +29,7 @@ class LoadableOAIPMHClient extends \oaipmh\OAIPMHClient implements \CHAOS\Harves
 	
 	protected function request($requiredArguments, $optionalArguments = array()) {
 		timed();
-		$response = $this->request($requiredArguments, $optionalArguments);
+		$response = parent::request($requiredArguments, $optionalArguments);
 		timed('oaipmh');
 		return $response;
 	}
