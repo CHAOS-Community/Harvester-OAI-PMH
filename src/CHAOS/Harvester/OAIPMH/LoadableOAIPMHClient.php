@@ -26,4 +26,11 @@ class LoadableOAIPMHClient extends \oaipmh\OAIPMHClient implements \CHAOS\Harves
 		$this->_harvester->info("Connected to the OAI-PMH endpoint named '%s' administrated by %s.", $response->Identify->repositoryName, $response->Identify->adminEmail);
 		return true;
 	}
+	
+	protected function request($requiredArguments, $optionalArguments = array()) {
+		timed();
+		$response = $this->request($requiredArguments, $optionalArguments);
+		timed('oaipmh');
+		return $response;
+	}
 }
