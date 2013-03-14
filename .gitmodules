@@ -1,0 +1,3 @@
+[submodule "lib/OAI-PMH-PHP-Client"]
+	path = lib/OAI-PMH-PHP-Client
+	url = https://github.com/kraenhansen/OAI-PMH-PHP-Client
