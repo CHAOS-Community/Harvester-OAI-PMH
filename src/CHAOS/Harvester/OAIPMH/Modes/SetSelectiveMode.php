@@ -1,6 +1,6 @@
 <?php
 namespace CHAOS\Harvester\OAIPMH\Modes;
-class SetSpecMode extends \CHAOS\Harvester\Modes\SetByReferenceMode implements \CHAOS\Harvester\Loadable {
+class SetSelectiveMode extends \CHAOS\Harvester\Modes\SetByReferenceMode implements \CHAOS\Harvester\Loadable {
 	
 	/**
 	 * The prefix to use when getting records from the service.
@@ -18,17 +18,29 @@ class SetSpecMode extends \CHAOS\Harvester\Modes\SetByReferenceMode implements \
 		
 		assert(is_string($reference));
 		
+		$reference = explode(';', $reference);
+		$from = null;
+		$until = null;
+		
+		$sets = $reference[0];
+		if(count($reference) > 1) {
+			$from = $reference[1];
+		}
+		if(count($reference) > 2) {
+			$until = $reference[2];
+		}
+		
 		/* @var $oaipmh \CHAOS\Harvester\OAIPMH\LoadableOAIPMHClient */
 		$oaipmh = $this->_harvester->getExternalClient('oaipmh');
 		
-		foreach(explode(',', $reference) as $set) {
+		foreach(explode(',', $sets) as $set) {
 			$r = 1;
 			$resumptionToken = null;
 			
 			$this->_harvester->info("Fetching references to all records belonging to the set '%s'.", $set);
 			do {
 				if($resumptionToken == null) {
-					$response = $oaipmh->ListRecords($this->_metadataPrefix, null, null, null, $set);
+					$response = $oaipmh->ListRecords($this->_metadataPrefix, null, $from, $until, $set);
 				} else {
 					$response = $oaipmh->ListRecords(null, $resumptionToken, null, null, null);
 				}
