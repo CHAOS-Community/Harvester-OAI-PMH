@@ -55,7 +55,7 @@ class SetSelectiveMode extends \CHAOS\Harvester\Modes\SetByReferenceMode impleme
 				$this->_harvester->info("Found %u records.", $total);
 			
 				foreach($records as $record) {
-					printf("[#%u/%u] ", $r++, $total);
+					printf("[#%u/%u in %s] ", $r++, $total, $set);
 					$recordShadow = null;
 					try {
 						$recordShadow = $this->_harvester->process('record', $record);
