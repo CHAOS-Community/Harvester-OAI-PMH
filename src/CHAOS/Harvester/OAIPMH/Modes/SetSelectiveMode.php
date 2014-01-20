@@ -39,34 +39,39 @@ class SetSelectiveMode extends \CHAOS\Harvester\Modes\SetByReferenceMode impleme
 			
 			$this->_harvester->info("Fetching references to all records belonging to the set '%s'.", $set);
 			do {
-				if($resumptionToken == null) {
-					$response = $oaipmh->ListRecords($this->_metadataPrefix, null, $from, $until, $set);
-				} else {
-					$response = $oaipmh->ListRecords(null, $resumptionToken, null, null, null);
-				}
-					
-				$records = $response->ListRecords->record;
-				if(count($response->ListRecords->resumptionToken) == 0) {
-					$total = count($records);
-				} else {
-					$total = $response->ListRecords->resumptionToken->attributes()->completeListSize;
-				}
-					
-				$this->_harvester->info("Found %u records.", $total);
-			
-				foreach($records as $record) {
-					printf("[#%u/%u in %s] ", $r++, $total, $set);
-					$recordShadow = null;
-					try {
-						$recordShadow = $this->_harvester->process('record', $record);
-					} catch(\Exception $e) {
-						$this->_harvester->registerProcessingException($e, $record, $recordShadow);
+				try {
+					if($resumptionToken == null) {
+						$response = $oaipmh->ListRecords($this->_metadataPrefix, null, $from, $until, $set);
+					} else {
+						$response = $oaipmh->ListRecords(null, $resumptionToken, null, null, null);
 					}
-					print("\n");
-				}
 					
-				$resumptionToken = strval($response->ListRecords->resumptionToken);
-			} while($r < $total);
+					$records = $response->ListRecords->record;
+					if(count($response->ListRecords->resumptionToken) == 0) {
+						$total = count($records);
+					} else {
+						$total = $response->ListRecords->resumptionToken->attributes()->completeListSize;
+					}
+						
+					$this->_harvester->info("Found %u records.", $total);
+				
+					foreach($records as $record) {
+						printf("[#%u/%u in %s] ", $r++, $total, $set);
+						$recordShadow = null;
+						try {
+							$recordShadow = $this->_harvester->process('record', $record);
+						} catch(\Exception $e) {
+							$this->_harvester->registerProcessingException($e, $record, $recordShadow);
+						}
+						print("\n");
+					}
+						
+					$resumptionToken = strval($response->ListRecords->resumptionToken);
+				} catch(\RuntimeException $e) {
+					\error_log('Error listing records: ' . $e->getTraceAsString());
+					$resumptionToken = null; // Stop this madness ...
+				}
+			} while($r < $total && $resumptionToken !== null);
 		}
 		
 	}
