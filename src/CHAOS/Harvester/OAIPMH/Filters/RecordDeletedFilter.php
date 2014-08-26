@@ -3,7 +3,7 @@ namespace CHAOS\Harvester\OAIPMH\Filters;
 class RecordDeletedFilter extends \CHAOS\Harvester\Filters\Filter {
 	
 	
-	public function passes($externalObject) {
+	public function passes($externalObject, $objectShadow) {
 		/* @var $externalObject \SimpleXMLElement */
 		
 		if(strval($externalObject->header->attributes()->status) === "deleted") {
