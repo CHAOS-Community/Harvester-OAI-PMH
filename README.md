@@ -1,17 +1,10 @@
-Harvester-DFI
+Harvester-OAI-PMH
 =============
 
-This harvester connects to the open API of the Danish Film Institute and copies information on movies into a CHAOS service.
+This harvester connects to any OAI-PMH API and copies information on items into a CHAOS service.
 
 ##Instructions
-Once you have cloned the repo onto your machine, the CHAOS Client for PHP must be cloned from https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP into some local folder.
-Set the following environment variables:
-* **CHAOS_CLIENT_SRC**: The "src" folder which contains the CHAOS Client PHP sourcecode.
-* **DFI_URL**: The URL of the DFI Open API. This is currently http://nationalfilmografien.service.dfi.dk/
-* **CHAOS_CLIENT_GUID**: Some generated unique ID (can be generated at http://www.guidgenerator.com/)
-* **CHAOS_URL**: A URL for some CHAOS service.
-* **CHAOS_EMAIL**: Email for a user on the CHAOS service.
-* **CHAOS_PASSWORD**: Password for a user on the CHAOS service.
+Yet to be written ...
 
 ##Requirements
 * The CHAOS Client for PHP must be cloned from https://github.com/CHAOS-Community/CHAOS.Portal.Client-PHP into some local folder.
